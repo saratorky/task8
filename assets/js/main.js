@@ -8,45 +8,64 @@ let  products=JSON.parse(localStorage.getItem("products"))||[];
 
 //clear
 function clearInputs(){
-    inputs.forEach((input)=>{
+    inputs.forEach((input ,index)=>{
+        if(index !=5){
+            input.value="";
+        }
         input.value='';
     })
     inputs[5].checked=false;
 
 }
 
-
+//trim
+function filtervalue(value){
+    newvalue=value.trim();
+    return newvalue;
+}
 //create
 function createProduct(){
-    if(editMode){
-        const product = {
-            title:inputs[0].value,
-            description:inputs[1].value,
-            amount:inputs[2].value,
-            price:inputs[3].value,
-            image:inputs[4].value,
+    let valid=true;
+      for(let i =0 ; i < inputs.length-1 ;i++){
+        if(inputs[i].value == ""){
+            valid=false;
+        }
+      }
+      if(valid){
+        if(editMode){
+            const product = {
+                title:filtervalue(inputs[0].value),
+                description:filtervalue(inputs[1].value),
+                amount:filtervalue(inputs[2].value),
+                price:filtervalue(inputs[3].value),
+                image:filtervalue(inputs[4].value),
+                sale:inputs[5].checked,
+            };
+            products[editIndex]=product;
+            btn.classList.replace('btn-warning','btn-primary');
+            btn.innerText="Submit";
+            editIndex=null;
+            editMode=false;
+        } else{
+          const product = {
+            title:filtervalue(inputs[0].value),
+            description:filtervalue(inputs[1].value),
+            amount:filtervalue(inputs[2].value),
+            price:filtervalue(inputs[3].value),
+            image:filtervalue(inputs[4].value),
             sale:inputs[5].checked,
-        };
-        products[editIndex]=product;
-        btn.classList.replace('btn-warning','btn-primary');
-        btn.innerText="Submit";
-        editIndex=null;
-        editMode=false;
-    } else{
-      const product = {
-        title:inputs[0].value,
-        description:inputs[1].value,
-        amount:inputs[2].value,
-        price:inputs[3].value,
-        image:inputs[4].value,
-        sale:inputs[5].checked,
-      };
-      products.push(product);
+          };
+          products.push(product);
+        }
+        clearInputs();
+        localStorage.setItem("products",JSON.stringify(products));
+        readproducts();
+    }else{
+        alert('please fill all inputs !');
+        valid= true;
     }
-    clearInputs();
-    localStorage.setItem("products",JSON.stringify(products));
-    readproducts();
 }
+    
 
 //read
 function readproducts(){
